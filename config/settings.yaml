@@ -1,0 +1,10 @@
+nav_collision_warning:
+  warning_threshold:  0.5  # Trigger a warning when obstacle is this close [m]
+  num_pts_to_check:  2     # Quantity of pts to check around chassis. Used to parse the points
+  pts_to_check:            # Check these points around the robot chassis. Defined in base_link frame
+    pt1:                   # Follow this naming convention
+      x:  0.5
+      y:  0.32
+    pt2:
+      x:  0.5
+      y:  -0.32

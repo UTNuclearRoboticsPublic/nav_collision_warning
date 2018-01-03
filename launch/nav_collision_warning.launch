@@ -1,0 +1,7 @@
+<launch>
+
+  <rosparam command="load" file="$(find nav_collision_warning)/config/settings.yaml" />
+
+  <node name="nav_collision_warning" pkg="nav_collision_warning" type="nav_collision_warning" output="screen" />
+
+</launch>
