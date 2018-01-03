@@ -13,7 +13,7 @@ struct map_inf {
 
 
 robot_warnings::results robot_warnings::find_nearest_obstacle(geometry_msgs::PointStamped & pt,
-                                    nav_msgs::OccupancyGrid & map){
+                                    nav_msgs::OccupancyGrid & map, tf::TransformListener &tf_l){
 
     // remapping information in info variable
     map_inf map_info;
@@ -27,7 +27,6 @@ robot_warnings::results robot_warnings::find_nearest_obstacle(geometry_msgs::Poi
     double gt_x = map.info.origin.position.x;
     double gt_y = map.info.origin.position.y;
 
-    tf::TransformListener tf_l(ros::Duration(10));
     geometry_msgs::PointStamped new_pt;
     bool success = false;
 

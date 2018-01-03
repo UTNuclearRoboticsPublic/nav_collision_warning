@@ -41,7 +41,8 @@ int main(int argc, char** argv)
 }
 
 
-robot_warnings::nav_collision_warning::nav_collision_warning()
+robot_warnings::nav_collision_warning::nav_collision_warning() :
+  tf_l_(ros::Duration(10))
 {
   // Need to subscribe to costmap and costmap_updates
   // Costmap is only updated when the robot is translating
@@ -104,7 +105,7 @@ void robot_warnings::nav_collision_warning::check_collisions()
     robot_warnings::results results;
     for (int i=0; i<points_to_check_.size(); i++)
     {
-      results = find_nearest_obstacle(points_to_check_[i], map_);
+      results = find_nearest_obstacle(points_to_check_[i], map_, tf_l_);
       if (results.min_dist < min_dist)
       {
         min_dist = results.min_dist;

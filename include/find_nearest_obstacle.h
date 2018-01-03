@@ -20,5 +20,5 @@ namespace robot_warnings
   };
 
  results find_nearest_obstacle(geometry_msgs::PointStamped & pt,
-                                    nav_msgs::OccupancyGrid & map);
+                                    nav_msgs::OccupancyGrid & map, tf::TransformListener &tf_l);
 }
