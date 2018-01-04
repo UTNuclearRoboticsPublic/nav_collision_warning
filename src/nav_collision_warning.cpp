@@ -44,14 +44,6 @@ int main(int argc, char** argv)
 robot_warnings::nav_collision_warning::nav_collision_warning() :
   tf_l_(ros::Duration(10))
 {
-  // Need to subscribe to costmap and costmap_updates
-  // Costmap is only updated when the robot is translating
-  map_sub_ = n_.subscribe("/move_base/local_costmap/costmap", 1, &nav_collision_warning::mapCB, this);
-  map_update_sub_ = n_.subscribe("/move_base/local_costmap/costmap_updates", 1, &nav_collision_warning::mapupdateCB, this);
-
-  coll_warning_pub_ = n_.advertise<std_msgs::Bool>("nav_collision_warning/imminent_collision", 1);
-  fwd_distance_pub_ = n_.advertise<std_msgs::Float64>("nav_collision_warning/fwd_distance_to_obst", 1);
-
   // Read params from yaml file
   ROS_INFO_STREAM("----------------------------------");
   ROS_INFO_STREAM("--NAV COLLISION WARNING SETTINGS--");
@@ -59,7 +51,21 @@ robot_warnings::nav_collision_warning::nav_collision_warning() :
   ROS_INFO_STREAM("Threshold distance for publishing a collision warning [m]: " << warning_threshold_);
   n_.getParam("/nav_collision_warning/num_pts_to_check", num_pts_to_check_);
   ROS_INFO_STREAM("Number of points around robot to check: " << num_pts_to_check_);
+  std::string costmap_topic;
+  n_.getParam("/nav_collision_warning/costmap_topic", costmap_topic);
+  ROS_INFO_STREAM("Costmap topic: " << costmap_topic);
+  std::string costmap_updates_topic;
+  n_.getParam("/nav_collision_warning/costmap_updates_topic", costmap_updates_topic);
+  ROS_INFO_STREAM("Costmap_updates topic: " << costmap_updates_topic);
   ROS_INFO_STREAM("----------------------------------");
+
+  // Need to subscribe to costmap and costmap_updates
+  // Costmap is only updated when the robot is translating
+  map_sub_ = n_.subscribe(costmap_topic, 1, &nav_collision_warning::mapCB, this);
+  map_update_sub_ = n_.subscribe(costmap_updates_topic, 1, &nav_collision_warning::mapupdateCB, this);
+
+  coll_warning_pub_ = n_.advertise<std_msgs::Bool>("nav_collision_warning/imminent_collision", 1);
+  fwd_distance_pub_ = n_.advertise<std_msgs::Float64>("nav_collision_warning/fwd_distance_to_obst", 1);
 
   // Initialize points to be checked
   double x, y;
@@ -78,7 +84,7 @@ robot_warnings::nav_collision_warning::nav_collision_warning() :
   bool checking_enabled = true;
   while ( ros::ok() )
   {
-    n_.getParam("/enable_nav_collision", checking_enabled);
+    n_.getParam("/nav_collision_warning/enable_nav_collision", checking_enabled);
 
     if (checking_enabled)
     {
