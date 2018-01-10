@@ -66,6 +66,7 @@ robot_warnings::nav_collision_warning::nav_collision_warning() :
 
   coll_warning_pub_ = n_.advertise<std_msgs::Bool>("nav_collision_warning/imminent_collision", 1);
   fwd_distance_pub_ = n_.advertise<std_msgs::Float64>("nav_collision_warning/fwd_distance_to_obst", 1);
+  spd_fraction_pub_ = n_.advertise<std_msgs::Float64>("nav_collision_warning/spd_fraction", 1);
 
   // Initialize points to be checked
   double x, y;
@@ -119,18 +120,33 @@ void robot_warnings::nav_collision_warning::check_collisions()
       }
     }
 
-    // Publish forward-distance (x in base_link) to nearest obstacle
-    std_msgs::Float64 fwd_distance_msg;
-    fwd_distance_msg.data = x_to_obstacle;
-    fwd_distance_pub_.publish(fwd_distance_msg);
-
     // Publish a warning if close to obstacle
-    if ( min_dist < 0.5 )
+    if ( min_dist < warning_threshold_ )
     {
       std_msgs::Bool warning_msg;
       warning_msg.data = true;
       coll_warning_pub_.publish(warning_msg);
+
+      // Publish a recommended speed fraction. This takes into account whether the obstacle is
+      // directly ahead or off to the side.
+      // Slow down more if the object is directly ahead.
+      std_msgs::Float64 spd_frac;
+      spd_frac.data = ((warning_threshold_-fabs(x_to_obstacle)) + 4*min_dist) / (5*warning_threshold_);
+      spd_fraction_pub_.publish(spd_frac);
     }
+    else
+    {
+      // Publish speed fraction.
+      // warning_threshold_ hasn't been exceeded, so allow full speed
+      std_msgs::Float64 spd_frac;
+      spd_frac.data = 1.;
+      spd_fraction_pub_.publish(spd_frac);
+    }
+
+    // Publish forward-distance (x in base_link) to nearest obstacle
+    std_msgs::Float64 fwd_distance_msg;
+    fwd_distance_msg.data = x_to_obstacle;
+    fwd_distance_pub_.publish(fwd_distance_msg);
   }
 
   return;

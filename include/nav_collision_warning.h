@@ -26,6 +26,7 @@ private:
   ros::Subscriber map_update_sub_;
   ros::Publisher coll_warning_pub_;
   ros::Publisher fwd_distance_pub_;
+  ros::Publisher spd_fraction_pub_;
 
   tf::TransformListener tf_l_;
   nav_msgs::OccupancyGrid map_;

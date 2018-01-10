@@ -1,5 +1,5 @@
 nav_collision_warning:
-  warning_threshold:  0.5  # Trigger a warning when obstacle is this close [m]
+  warning_threshold:  1  # Trigger a warning when obstacle is this close [m]
   costmap_topic:  /move_base/local_costmap/costmap
   costmap_updates_topic:  /move_base/local_costmap/costmap_updates
   num_pts_to_check:  2     # Quantity of pts to check around chassis. Used to parse the points
