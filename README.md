@@ -21,4 +21,4 @@ Resume again with:
 **rosparam set /nav_collision_warning/enable_nav_collision true**
 
 
-When an obstacle is close, the node will publish true on **/nav_collision_warning/imminent_collision**. The node will always publish the forward distance to the nearest obstacle on **/nav_collision_warning/fwd_distance_to_obst**. (Presuming your robot can't instantly jump sideways, the forward direction is more important.) You could use this fwd_distance to slow down proportionally as an obstacle is approached.
+When an obstacle is close, the node will publish true on **/nav_collision_warning/imminent_collision**. The node will always publish the forward distance to the nearest obstacle on **/nav_collision_warning/fwd_distance_to_obst**. (Presuming your robot can't instantly jump sideways, the forward direction is more important.) You could use this fwd_distance to slow down proportionally as an obstacle is approached. The node also publishes a recommended velocity scaling factor on **/nav_collision_warning/spd_fraction**. This takes the x- and y-proximity of the obstacle into account.
