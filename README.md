@@ -26,5 +26,7 @@ When an obstacle is close, the node will publish true on **/nav_collision_warnin
 In summary:
 
 **imminent_collision** looks at the radius to the nearest obstacle
+
 **fwd_distance_to_obstacle** looks at the x distance to the nearest obstacle
+
 **spd_fraction** is some weird function based on x and y. It's what I would use.
