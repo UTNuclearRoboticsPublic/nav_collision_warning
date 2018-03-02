@@ -47,8 +47,6 @@ robot_warnings::nav_collision_warning::nav_collision_warning() :
   // Read params from yaml file
   ROS_INFO_STREAM("----------------------------------");
   ROS_INFO_STREAM("--NAV COLLISION WARNING SETTINGS--");
-  n_.getParam("/nav_collision_warning/warning_threshold", warning_threshold_);
-  ROS_INFO_STREAM("Threshold distance for publishing a collision warning [m]: " << warning_threshold_);
   n_.getParam("/nav_collision_warning/num_pts_to_check", num_pts_to_check_);
   ROS_INFO_STREAM("Number of points around robot to check: " << num_pts_to_check_);
   std::string costmap_topic;
@@ -57,6 +55,10 @@ robot_warnings::nav_collision_warning::nav_collision_warning() :
   std::string costmap_updates_topic;
   n_.getParam("/nav_collision_warning/costmap_updates_topic", costmap_updates_topic);
   ROS_INFO_STREAM("Costmap_updates topic: " << costmap_updates_topic);
+  n_.getParam("/nav_collision_warning/collision_ellipse_x", collision_ellipse_x_);
+  ROS_INFO_STREAM("X-dimension of collision ellipse: " << collision_ellipse_x_);
+  n_.getParam("/nav_collision_warning/collision_ellipse_y", collision_ellipse_y_);
+  ROS_INFO_STREAM("Y-dimension of collision ellipse: " << collision_ellipse_y_);
   ROS_INFO_STREAM("----------------------------------");
 
   // Need to subscribe to costmap and costmap_updates
@@ -64,8 +66,6 @@ robot_warnings::nav_collision_warning::nav_collision_warning() :
   map_sub_ = n_.subscribe(costmap_topic, 1, &nav_collision_warning::mapCB, this);
   map_update_sub_ = n_.subscribe(costmap_updates_topic, 1, &nav_collision_warning::mapupdateCB, this);
 
-  coll_warning_pub_ = n_.advertise<std_msgs::Bool>("nav_collision_warning/imminent_collision", 1);
-  fwd_distance_pub_ = n_.advertise<std_msgs::Float64>("nav_collision_warning/fwd_distance_to_obst", 1);
   spd_fraction_pub_ = n_.advertise<std_msgs::Float64>("nav_collision_warning/spd_fraction", 1);
 
   // Initialize points to be checked
@@ -107,46 +107,31 @@ void robot_warnings::nav_collision_warning::check_collisions()
   {
 
     // Check these pts around the chassis
-    double min_dist = 100000.;
-    double x_to_obstacle = 0.;
+    double x_to_obs = 0.;
+    double y_to_obs = 0.;
+    double min_dist = 1000.;
     robot_warnings::results results;
     for (int i=0; i<points_to_check_.size(); i++)
     {
       results = find_nearest_obstacle(points_to_check_[i], map_, tf_l_);
       if (results.min_dist < min_dist)
       {
-        min_dist = results.min_dist;
-        x_to_obstacle = results.x_to_obstacle;
+        x_to_obs = results.x_to_obstacle;
+        y_to_obs = results.y_to_obstacle;
       }
     }
 
-    // Publish a warning if close to obstacle
-    if ( min_dist < warning_threshold_ )
-    {
-      std_msgs::Bool warning_msg;
-      warning_msg.data = true;
-      coll_warning_pub_.publish(warning_msg);
+	// Publish speed fraction.
+  // This is based on the equation of an ellipse.
+	std_msgs::Float64 spd_frac;
+	spd_frac.data = x_to_obs*x_to_obs/(collision_ellipse_x_*collision_ellipse_x_) +
+    y_to_obs*y_to_obs/(collision_ellipse_y_*collision_ellipse_y_);
 
-      // Publish a recommended speed fraction. This takes into account whether the obstacle is
-      // directly ahead or off to the side.
-      // Slow down more if the object is directly ahead.
-      std_msgs::Float64 spd_frac;
-      spd_frac.data = ((warning_threshold_-fabs(x_to_obstacle)) + 4*min_dist) / (5*warning_threshold_);
-      spd_fraction_pub_.publish(spd_frac);
-    }
-    else
-    {
-      // Publish speed fraction.
-      // warning_threshold_ hasn't been exceeded, so allow full speed
-      std_msgs::Float64 spd_frac;
-      spd_frac.data = 1.;
-      spd_fraction_pub_.publish(spd_frac);
-    }
+	// If very far away, don't slow down
+	if ( spd_frac.data >= 1. )
+	  spd_frac.data = 1.;
 
-    // Publish forward-distance (x in base_link) to nearest obstacle
-    std_msgs::Float64 fwd_distance_msg;
-    fwd_distance_msg.data = x_to_obstacle;
-    fwd_distance_pub_.publish(fwd_distance_msg);
+	spd_fraction_pub_.publish(spd_frac);
   }
 
   return;

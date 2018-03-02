@@ -99,6 +99,7 @@ robot_warnings::results robot_warnings::find_nearest_obstacle(geometry_msgs::Poi
 
     results results;
     results.x_to_obstacle = output_vec.vector.x;
+    results.y_to_obstacle = output_vec.vector.y;
     results.min_dist = min_dist;
 
     return results;
