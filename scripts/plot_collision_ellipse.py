@@ -30,8 +30,8 @@ if __name__ == "__main__":
 
 	for x in np.nditer(x_range):
 		for y in np.nditer(y_range):
-			if ( x**2/a**2 + y**2/b**2 ) < 1 :
-				spd_fraction = x**2/a**2 + y**2/b**2
+			if ( x**2/a**2 + y**2/b**2 + 0.2 ) < 1 :
+				spd_fraction = x**2/a**2 + y**2/b**2 + 0.2
 			else:
 				spd_fraction = 1
 			ax.scatter(x, y, spd_fraction)

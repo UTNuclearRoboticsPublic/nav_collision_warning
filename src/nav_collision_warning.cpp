@@ -123,9 +123,10 @@ void robot_warnings::nav_collision_warning::check_collisions()
 
 	// Publish speed fraction.
   // This is based on the equation of an ellipse.
+  // 0.1 is added so speed never drops below 0.1.
 	std_msgs::Float64 spd_frac;
 	spd_frac.data = x_to_obs*x_to_obs/(collision_ellipse_x_*collision_ellipse_x_) +
-    y_to_obs*y_to_obs/(collision_ellipse_y_*collision_ellipse_y_);
+    y_to_obs*y_to_obs/(collision_ellipse_y_*collision_ellipse_y_) + 0.2;
 
 	// If very far away, don't slow down
 	if ( spd_frac.data >= 1. )
