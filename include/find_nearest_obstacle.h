@@ -15,8 +15,7 @@ namespace robot_warnings
 {
   struct results
   {
-    double min_dist;
-    double x_to_obstacle;
+    double x_to_obstacle, y_to_obstacle, min_dist;
   };
 
  results find_nearest_obstacle(geometry_msgs::PointStamped & pt,

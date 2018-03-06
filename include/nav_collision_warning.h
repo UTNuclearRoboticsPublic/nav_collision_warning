@@ -24,8 +24,6 @@ private:
 
   ros::Subscriber map_sub_;
   ros::Subscriber map_update_sub_;
-  ros::Publisher coll_warning_pub_;
-  ros::Publisher fwd_distance_pub_;
   ros::Publisher spd_fraction_pub_;
 
   tf::TransformListener tf_l_;
@@ -38,15 +36,9 @@ private:
   // Points on the robot chassis to check for collision
   std::vector<geometry_msgs::PointStamped> points_to_check_;
 
-  // Get configurable max. speeds from ROS param server
-  double scale_angular_;
-  double scale_angular_turbo_;
-  double scale_linear_;
-  double scale_linear_turbo_;
-
   // These parameters are read from a yaml file
-  double warning_threshold_;
   int num_pts_to_check_;
+  double collision_ellipse_x_, collision_ellipse_y_;
 };
 
 } // End robot_warnings namespace

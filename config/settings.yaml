@@ -1,8 +1,9 @@
 nav_collision_warning:
-  warning_threshold:  1  # Trigger a warning when obstacle is this close [m]
   costmap_topic:  /move_base/local_costmap/costmap
   costmap_updates_topic:  /move_base/local_costmap/costmap_updates
-  num_pts_to_check:  2     # Quantity of pts to check around chassis. Used to parse the points
+  collision_ellipse_x:  1.5  # x-dimension of the ellipse where spd_fraction drops below 1
+  collision_ellipse_y:  0.5  # y-dimension of the ellipse where spd_fraction drops below 1
+  num_pts_to_check:  3     # Quantity of pts to check around chassis. Used to parse the points
   pts_to_check:            # Check these points around the robot chassis. Defined in base_link frame
     pt1:                   # Follow this naming convention
       x:  0.5
@@ -10,3 +11,6 @@ nav_collision_warning:
     pt2:
       x:  0.5
       y:  -0.32
+    pt3:
+      x:  0.5
+      y:  0

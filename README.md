@@ -21,12 +21,10 @@ Resume again with:
 **rosparam set /nav_collision_warning/enable_nav_collision true**
 
 
-When an obstacle is close, the node will publish true on **/nav_collision_warning/imminent_collision**. The node will always publish the forward distance to the nearest obstacle on **/nav_collision_warning/fwd_distance_to_obst**. (Presuming your robot can't instantly jump sideways, the forward direction is more important.) The node also publishes a recommended velocity scaling factor on **/nav_collision_warning/spd_fraction**. This takes the x- and y-proximity of the obstacle into account. You could use this fwd_distance to slow down proportionally as an obstacle is approached.
+The node publishes **/nav_collision_warning/spd_fraction**. If an obstacle is close, this drops below 1.0 and can be used to scale the velocity of the robot.
 
-In summary:
+See a plot of how spd_fraction varies by running...
 
-**imminent_collision** looks at the radius to the nearest obstacle
+**roslaunch nav_collision_warning plot_collision_ellipse.launch**
 
-**fwd_distance_to_obstacle** looks at the x distance to the nearest obstacle
-
-**spd_fraction** is some weird function based on x and y. It's what I would use.
+Change its dimensions in the config file.

@@ -1,0 +1,7 @@
+<launch>
+
+  <rosparam command="load" file="$(find nav_collision_warning)/config/settings.yaml" />
+
+  <node name="plot_collision_ellipse" pkg="nav_collision_warning" type="plot_collision_ellipse.py" output="screen" />
+
+</launch>
