@@ -2,7 +2,7 @@ nav_collision_warning:
   costmap_topic:  /move_base/local_costmap/costmap
   costmap_updates_topic:  /move_base/local_costmap/costmap_updates
   collision_ellipse_x:  1.5  # x-dimension of the ellipse where spd_fraction drops below 1
-  collision_ellipse_y:  0.5  # y-dimension of the ellipse where spd_fraction drops below 1
+  collision_ellipse_y:  0.8  # y-dimension of the ellipse where spd_fraction drops below 1
   num_pts_to_check:  3     # Quantity of pts to check around chassis. Used to parse the points
   pts_to_check:            # Check these points around the robot chassis. Defined in base_link frame
     pt1:                   # Follow this naming convention
